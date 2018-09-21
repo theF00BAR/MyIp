@@ -51,7 +51,7 @@ namespace MyIp
                 }
             }
 
-            var rtn = new List<IpInfo>();
+            var found = new List<IpInfo>();
 
             IpVersion? pIpVer = null;
             string pName = null;
@@ -100,7 +100,7 @@ namespace MyIp
 
                         pBits = ln.Split(new char[] { ':' }, 2, StringSplitOptions.RemoveEmptyEntries);
 
-                        rtn.Add(new IpInfo()
+                        found.Add(new IpInfo()
                         {
                             Version = pIpVer.Value,
                             Label = pName,
@@ -113,7 +113,71 @@ namespace MyIp
 
             }
 
-            return rtn;
+            var ethV4 = new List<IpInfo>();
+            var ethV6 = new List<IpInfo>();
+
+            var wifiV4 = new List<IpInfo>();
+            var wifiV6 = new List<IpInfo>();
+
+            var othersV4 = new List<IpInfo>();
+            var othersV6 = new List<IpInfo>();
+
+            foreach (var ip in found)
+            {
+
+                if (ip.Label.Equals("Eth", StringComparison.InvariantCultureIgnoreCase))
+                {
+
+                    if (ip.Version == IpVersion.V6)
+                    {
+                        ethV6.Add(ip);
+                    }
+                    else
+                    {
+                        ethV4.Add(ip);
+                    }
+
+                }
+                else if (ip.Label.Equals("Wi-Fi", StringComparison.InvariantCultureIgnoreCase))
+                {
+
+                    if (ip.Version == IpVersion.V6)
+                    {
+                        wifiV6.Add(ip);
+                    }
+                    else
+                    {
+                        wifiV4.Add(ip);
+                    }
+
+                }
+                else
+                {
+
+                    if (ip.Version == IpVersion.V6)
+                    {
+                        othersV6.Add(ip);
+                    }
+                    else
+                    {
+                        othersV4.Add(ip);
+                    }
+
+                }
+
+            }
+
+            found.Clear();
+
+            found.AddRange(ethV4);
+            found.AddRange(wifiV4);
+            found.AddRange(othersV4);
+
+            found.AddRange(ethV6);
+            found.AddRange(wifiV6);
+            found.AddRange(othersV6);
+
+            return found;
 
         }
 
